@@ -1,4 +1,4 @@
-const OrderDelivery = require("../models/OrderDeliveryModel");
+const OrderDelivery = require("../models/orderDeliveryModel");
 const APIFeatures = require("../utils/apiFeatures");
 const AppError = require("../utils/appError");
 const factory = require("./handlerFactory");
