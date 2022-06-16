@@ -20,6 +20,10 @@ const vendorSchema = new mongoose.Schema(
       default: "corporate",
       enum: ["corporate", "individual"],
     },
+    logo: {
+      type: String,
+      required: [false, "Please provide the logo of this vendor"],
+    },
     vendorCountry: [
       {
         type: mongoose.Schema.ObjectId,

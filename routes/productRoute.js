@@ -7,7 +7,7 @@ const router = express.Router();
 
 //protect all the routes below
 
-router.use(authController.protect);
+//router.use(authController.protect);
 
 router
   .route("/")
@@ -20,7 +20,11 @@ router
 router
   .route("/:id")
   .get(productController.getProduct)
-  .patch(productController.updateProduct)
+  .patch(
+    productController.uploadProductImages,
+    productController.resizeProductImages,
+    productController.updateProduct
+  )
   .delete(
     authController.restrictTo("admin", "partner_admin"),
     productController.deleteProduct

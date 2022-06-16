@@ -14,12 +14,20 @@ const router = express.Router();
 router
   .route("/")
   .get(currencyController.getAllCurrencies)
-  .post(currencyController.createCurrency);
+  .post(
+    currencyController.uploadCurrencySymbol,
+    currencyController.resizeCurrencySymbol,
+    currencyController.createCurrency
+  );
 
 router
   .route("/:id")
   .get(currencyController.getCurrency)
-  .patch(currencyController.updateCurrency)
+  .patch(
+    currencyController.uploadCurrencySymbol,
+    currencyController.resizeCurrencySymbol,
+    currencyController.updateCurrency
+  )
   .delete(currencyController.deleteCurrency);
 
 module.exports = router;

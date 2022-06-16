@@ -7,7 +7,7 @@ const factory = require("./handlerFactory");
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
-//     cb(null, "public/img/user");
+//     cb(null, "public/images/users");
 //   },
 //   filename: (req, file, cb) => {
 //     const ext = file.mimetype.split("/")[1];
@@ -19,7 +19,7 @@ const multerStorage = multer.memoryStorage();
 
 //create a multer filter
 const multerFilter = (req, file, cb) => {
-  if (req.mimetype.startWith("image")) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
     cb(
@@ -29,7 +29,7 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-// const upload = multer({ dest: "public/img/user" });
+//const upload = multer({ dest: "public/images/users" });
 
 const upload = multer({
   storage: multerStorage,
@@ -37,7 +37,7 @@ const upload = multer({
 });
 
 //when uploading a single file
-exports.uploadUserPhoto = upload.single("picture");
+exports.uploadUserPhoto = upload.single("photo");
 
 //when uploading multiple files
 exports.uploadUserPhotos = upload.fields([
@@ -64,7 +64,7 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
     .resize(500, 500)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`/public/img/user/${req.file.filename}`);
+    .toFile(`public/images/users/${req.file.filename}`);
 
   next();
 });
@@ -73,7 +73,7 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
 exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
   console.log(req.files); //logging multiples
-  if (!req.files.imageCover || req.files.images) return next();
+  if (!req.files.imageCover || !req.files.images) return next();
 
   //1. start by processing the cover image
   req.body.imageCover = `user-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -81,7 +81,7 @@ exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
     .resize(2000, 1333)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`/public/img/user/${req.body.imageCover}`);
+    .toFile(`/public/images/users/${req.body.imageCover}`);
 
   //2. process all the other images in a loop
   req.body.images = [];
@@ -93,7 +93,7 @@ exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
         .resize(2000, 1333)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`/public/img/user/${filename}`);
+        .toFile(`/public/images/users/${filename}`);
 
       req.body.images.push(filename);
     })
@@ -106,7 +106,7 @@ const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
     if (allowedFields.includes(el)) {
-      newObj[el] = obj[ej];
+      newObj[el] = obj[el];
     }
   });
   return newObj;

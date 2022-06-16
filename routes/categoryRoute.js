@@ -1,7 +1,11 @@
 const express = require("express");
+const multer = require("multer");
+const sharp = require("sharp");
 
 const categoryController = require("./../controllers/categoryController");
 const authController = require("./../controllers/authController");
+
+const upload = multer({ dest: "public/images/categories" });
 
 const router = express.Router();
 
@@ -17,6 +21,8 @@ router
   .post(
     authController.protect,
     authController.restrictTo("admin"),
+    categoryController.uploadCategoryImage,
+    categoryController.resizeCategoryImage,
     categoryController.createCategory
   );
 
@@ -26,6 +32,8 @@ router
   .patch(
     authController.protect,
     authController.restrictTo("admin"),
+    categoryController.uploadCategoryImage,
+    categoryController.resizeCategoryImage,
     categoryController.updateCategory
   )
   .delete(

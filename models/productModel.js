@@ -19,9 +19,9 @@ const productSchema = new mongoose.Schema(
     plateNumber: {
       type: String,
     },
-    coverImage: {
+    imageCover: {
       type: String,
-      required: [false, "Please provide the image of this product"],
+      default: "",
     },
     images: [String],
     quantity: {

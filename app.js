@@ -8,8 +8,7 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const CookieParser = require("cookie-parser");
 const compression = require("compression");
-const multer = require("multer");
-const sharp = require("sharp");
+const bodyParser = require("body-parser");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -32,6 +31,9 @@ const orderAssignmentRouter = require("./routes/orderAssignmentRoute");
 const orderDeliveryRouter = require("./routes/orderDeliveryRoute");
 
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 //Cross Origin middleware
 app.use(cors());
@@ -89,7 +91,7 @@ app.use(compression());
 app.use((req, res, next) => {
   //define  property on the request object
   req.requestTime = new Date().toISOString();
-  console.log(req.cookies);
+  // console.log(req.cookies);
   next();
 });
 

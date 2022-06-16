@@ -15,8 +15,8 @@ router
   .route("/")
   .get(countryController.getAllCountries)
   .post(
-    countryController.uploadCountryFlagImage,
-    countryController.resizeCountryFlagImage,
+    countryController.uploadCountryFlag,
+    countryController.resizeCountryFlag,
     countryController.createCountry
   );
 
@@ -24,8 +24,8 @@ router
   .route("/:id")
   .get(countryController.getCountry)
   .patch(
-    countryController.uploadCountryFlagImage,
-    countryController.resizeCountryFlagImage,
+    countryController.uploadCountryFlag,
+    countryController.resizeCountryFlag,
     countryController.updateCountry
   )
   .delete(countryController.deleteCountry);

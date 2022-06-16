@@ -3,6 +3,8 @@ const APIFeatures = require("./../utils/apiFeatures");
 const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
 
+
+
 //the handler to get all clusters
 exports.getAllClusters = factory.getAll(Cluster);
 

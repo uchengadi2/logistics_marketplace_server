@@ -2,6 +2,7 @@ const multer = require("multer");
 const sharp = require("sharp");
 const Country = require("../models/countryModel");
 const APIFeatures = require("./../utils/apiFeatures");
+const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
 
@@ -9,7 +10,7 @@ const multerStorage = multer.memoryStorage();
 
 //create a multer filter
 const multerFilter = (req, file, cb) => {
-  if (req.mimetype.startWith("image")) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
     cb(
@@ -19,7 +20,7 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-// const upload = multer({ dest: "public/img/user" });
+//const upload = multer({ dest: "public/images/users" });
 
 const upload = multer({
   storage: multerStorage,
@@ -27,18 +28,19 @@ const upload = multer({
 });
 
 //when uploading a single file
-exports.uploadCountryFlagImage = upload.single("flag");
+exports.uploadCountryFlag = upload.single("flag");
 
-exports.resizeCountryFlagImage = catchAsync(async (req, res, next) => {
+exports.resizeCountryFlag = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
-  req.file.filename = `country-${req.country.id}-${Date.now()}.jpeg`;
+  //1. start by processing the cover image
+  req.body.flag = `country-${req.params.id}-${Date.now()}-flag.jpeg`;
 
   await sharp(req.file.buffer)
-    .resize(500, 500)
+    .resize(2000, 1333)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`/public/images/countries/${req.file.filename}`);
+    .toFile(`public/images/countries/${req.body.flag}`);
 
   next();
 });
