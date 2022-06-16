@@ -1,7 +1,106 @@
+const multer = require("multer");
+const sharp = require("sharp");
 const User = require("../models/userModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 const factory = require("./handlerFactory");
+
+// const multerStorage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "public/img/user");
+//   },
+//   filename: (req, file, cb) => {
+//     const ext = file.mimetype.split("/")[1];
+//     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
+//   },
+// });
+
+const multerStorage = multer.memoryStorage();
+
+//create a multer filter
+const multerFilter = (req, file, cb) => {
+  if (req.mimetype.startWith("image")) {
+    cb(null, true);
+  } else {
+    cb(
+      new AppError("this file is not an image, Please upload only images", 404),
+      false
+    );
+  }
+};
+
+// const upload = multer({ dest: "public/img/user" });
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter,
+});
+
+//when uploading a single file
+exports.uploadUserPhoto = upload.single("picture");
+
+//when uploading multiple files
+exports.uploadUserPhotos = upload.fields([
+  {
+    name: "imageCover",
+    maxCount: 1,
+  },
+  {
+    name: "images",
+    maxCount: 3,
+  },
+]);
+
+//assuming there were only one image field on the form but accepts multiple images, it can be treated with this script
+
+exports.uploadMultupleImages = upload.array("images", 5);
+
+exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`/public/img/user/${req.file.filename}`);
+
+  next();
+});
+
+//processing multiple images
+
+exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
+  console.log(req.files); //logging multiples
+  if (!req.files.imageCover || req.files.images) return next();
+
+  //1. start by processing the cover image
+  req.body.imageCover = `user-${req.params.id}-${Date.now()}-cover.jpeg`;
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`/public/img/user/${req.body.imageCover}`);
+
+  //2. process all the other images in a loop
+  req.body.images = [];
+  await Promise.all(
+    req.files.images.map(async (file, index) => {
+      const filename = `user-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat("jpeg")
+        .jpeg({ quality: 90 })
+        .toFile(`/public/img/user/${filename}`);
+
+      req.body.images.push(filename);
+    })
+  );
+
+  next();
+});
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -31,6 +130,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   // 2. Filter out unwanted field names that will not be updated
   const filteredBody = filterObj(req.body, "name", "email");
+  if (req.file) filteredBody.photo = req.file.filename;
 
   // 2. Update User document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {

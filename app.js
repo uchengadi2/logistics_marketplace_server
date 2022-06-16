@@ -8,6 +8,8 @@ const xss = require("xss-clean");
 const hpp = require("hpp");
 const CookieParser = require("cookie-parser");
 const compression = require("compression");
+const multer = require("multer");
+const sharp = require("sharp");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");

@@ -40,6 +40,16 @@ const countrySchema = new mongoose.Schema(
         "north-north",
       ],
     },
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    dateCreated: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     toJSON: { virtuals: true },

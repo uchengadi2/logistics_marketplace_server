@@ -14,12 +14,20 @@ const router = express.Router();
 router
   .route("/")
   .get(countryController.getAllCountries)
-  .post(countryController.createCountry);
+  .post(
+    countryController.uploadCountryFlagImage,
+    countryController.resizeCountryFlagImage,
+    countryController.createCountry
+  );
 
 router
   .route("/:id")
   .get(countryController.getCountry)
-  .patch(countryController.updateCountry)
+  .patch(
+    countryController.uploadCountryFlagImage,
+    countryController.resizeCountryFlagImage,
+    countryController.updateCountry
+  )
   .delete(countryController.deleteCountry);
 
 module.exports = router;
