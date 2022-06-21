@@ -24,6 +24,16 @@ const currencySchema = new mongoose.Schema(
         ref: "Country",
       },
     ],
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    dateCreated: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     toJSON: { virtuals: true },

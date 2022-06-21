@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       default: "user",
-      enum: ["user", "partner", "admin", "partner_admin"],
+      enum: ["user", "partner", "admin", "partner_admin", "customer"],
     },
     password: {
       type: String,
@@ -117,7 +117,8 @@ userSchema.methods.createPasswordResetToken = function () {
 
   console.log({ resetToken }, this.passwordResetToken);
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  //this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  this.passwordResetExpiresAt = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
 };

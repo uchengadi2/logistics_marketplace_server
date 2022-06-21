@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
     },
     imageCover: {
       type: String,
-      default: "",
+      required: [false, "Please provide the image cover"],
     },
     images: [String],
     quantity: {
@@ -57,18 +57,26 @@ const productSchema = new mongoose.Schema(
       default: Date.now,
       select: false,
     },
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
     permanentLocation: {
       type: {
         type: String,
         default: "Point",
         enum: ["Point"],
       },
+
       coordinates: [Number],
       permanentLocationAddress: String,
-      permanentLocationLatitude: Number,
-      permanentLocationLongitide: Number,
+      permanentLocationLatitude: { type: Number, default: 0 },
+      permanentLocationLongitide: { type: Number, default: 0 },
       availabilityStatus: {
         type: String,
+        default: "available",
         enum: ["available", "notAvailable"],
       },
       city: [

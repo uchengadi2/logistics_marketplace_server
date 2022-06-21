@@ -35,16 +35,38 @@ exports.uploadProductImages = upload.fields([
   },
   {
     name: "images",
-    maxCount: 3,
+    maxCount: 5,
   },
 ]);
+
+//when uploading a single file
+exports.uploadProductCoverImage = upload.single("imageCover");
+
+exports.resizeProductCoverImage = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  //1. start by processing the cover image
+  req.body.imageCover = `product-${
+    req.body.createdBy
+  }-${Date.now()}-cover.jpeg`;
+
+  await sharp(req.file.buffer)
+    .resize(2000, 1333)
+    .toFormat("jpeg")
+    .jpeg({ quality: 90 })
+    .toFile(`public/images/products/${req.body.imageCover}`);
+
+  next();
+});
 
 exports.resizeProductImages = catchAsync(async (req, res, next) => {
   //   console.log(req.files); //logging multiples
   if (!req.files.imageCover || !req.files.images) return next();
 
   //1. start by processing the cover image
-  req.body.imageCover = `product-${req.params.id}-${Date.now()}-cover.jpeg`;
+  req.body.imageCover = `product-${
+    req.body.createdBy
+  }-${Date.now()}-cover.jpeg`;
 
   await sharp(req.files.imageCover[0].buffer)
     .resize(2000, 1333)
@@ -56,7 +78,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
   req.body.images = [];
   await Promise.all(
     req.files.images.map(async (file, index) => {
-      const filename = `product-${req.params.id}-${Date.now()}-${
+      const filename = `product-${req.body.createdBy}-${Date.now()}-${
         index + 1
       }.jpeg`;
 

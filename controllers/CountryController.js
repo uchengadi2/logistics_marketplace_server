@@ -32,9 +32,10 @@ exports.uploadCountryFlag = upload.single("flag");
 
 exports.resizeCountryFlag = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
-
   //1. start by processing the cover image
-  req.body.flag = `country-${req.params.id}-${Date.now()}-flag.jpeg`;
+  req.body.flag = `${req.body.name}-${
+    req.body.createdBy
+  }-${Date.now()}-flag.jpeg`;
 
   await sharp(req.file.buffer)
     .resize(2000, 1333)

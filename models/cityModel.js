@@ -30,6 +30,16 @@ const citySchema = new mongoose.Schema(
       type: String,
       enum: ["safe", "unsafe"],
     },
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    dateCreated: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     toJSON: { virtuals: true },

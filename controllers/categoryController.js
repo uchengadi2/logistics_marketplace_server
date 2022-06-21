@@ -34,7 +34,9 @@ exports.resizeCategoryImage = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   //1. start by processing the cover image
-  req.body.image = `category-${req.params.id}-${Date.now()}-cover.jpeg`;
+  req.body.image = `${req.body.name.split(" ")[0]}-${
+    req.body.createdBy
+  }-${Date.now()}-cover.jpeg`;
 
   await sharp(req.file.buffer)
     .resize(2000, 1333)

@@ -1,9 +1,13 @@
 const multer = require("multer");
 const sharp = require("sharp");
+const { promisify } = require("util");
+const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const AppError = require("./../utils/appError");
 const catchAsync = require("./../utils/catchAsync");
 const factory = require("./handlerFactory");
+const authController = require("./authController");
+const sendEmail = require("./..//utils/email");
 
 // const multerStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -81,7 +85,7 @@ exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
     .resize(2000, 1333)
     .toFormat("jpeg")
     .jpeg({ quality: 90 })
-    .toFile(`/public/images/users/${req.body.imageCover}`);
+    .toFile(`public/images/users/${req.body.imageCover}`);
 
   //2. process all the other images in a loop
   req.body.images = [];
@@ -93,7 +97,7 @@ exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
         .resize(2000, 1333)
         .toFormat("jpeg")
         .jpeg({ quality: 90 })
-        .toFile(`/public/images/users/${filename}`);
+        .toFile(`public/images/users/${filename}`);
 
       req.body.images.push(filename);
     })
@@ -153,12 +157,93 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined",
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
+
+  user.password = undefined; //remove the password field from showing up
+  //sending the token in a cookie
+  res.cookie("jwt", token, cookieOptions);
+
+  res.status(statusCode).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
   });
 };
+
+exports.createUser = catchAsync(async (req, res, next) => {
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
+    role: req.body.role,
+    type: req.body.type,
+    passwordResetToken: req.body.passwordResetToken,
+  });
+
+  //createSendToken(newUser, 201, res);
+  //2. Generate the random reset token
+  const resetToken = newUser.createPasswordResetToken();
+  await newUser.save({ validateBeforeSave: false });
+  //3. Send it to user's email
+  const resetUrl = `${req.protocol}://${req.get(
+    "host"
+  )}/api/v1/users/resetpassword/${resetToken};`;
+  const message = `You have been created successfully? Please click on this link to reset your password ${resetUrl}, \n Please kindly ignore if you did not request to be created`;
+
+  try {
+    await sendEmail({
+      email: newUser.email,
+      subject: "Your password Reset Token (valid for 10 mins)",
+      message,
+    });
+
+    //prepare data to send to the client
+    const data = {
+      name: req.body.name,
+      email: req.body.email,
+      role: req.body.role,
+      type: req.body.type,
+    };
+    //send data to the client
+    // res.status(200).json({
+    //   status: "success",
+    //   message: "Token sent via email to the user",
+
+    // });
+    res.status(200).json({
+      status: "success",
+      message: "Token sent via email to the user",
+      data: {
+        data: data,
+      },
+    });
+  } catch (err) {
+    newUser.passwordResetToken = undefined;
+    newUser.passwordResetExpires = undefined;
+    await newUser.save({ validateBeforeSave: false });
+
+    return next(
+      new AppError(
+        "There was an error sending the email for password reset, Try again later"
+      ),
+      500
+    );
+  }
+});
 
 exports.updateUser = factory.updateOne(User);
 

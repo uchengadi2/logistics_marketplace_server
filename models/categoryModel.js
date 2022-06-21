@@ -14,11 +14,22 @@ const categorySchema = new mongoose.Schema(
     },
     type: {
       type: String,
+      default: "vehicle",
       enum: ["vehicle", "warehouse"],
     },
     image: {
       type: String,
       required: [false, "Please provide the image cover"],
+    },
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    dateCreated: {
+      type: Date,
+      default: Date.now,
     },
   },
   {

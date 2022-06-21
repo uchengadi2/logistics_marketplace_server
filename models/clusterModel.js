@@ -12,6 +12,7 @@ const clusterSchema = new mongoose.Schema(
     },
     type: {
       type: String,
+      default: "city",
       enum: ["city", "state", "country"],
     },
     city: [
@@ -20,6 +21,16 @@ const clusterSchema = new mongoose.Schema(
         ref: "City",
       },
     ],
+    createdBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    dateCreated: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     toJSON: { virtuals: true },

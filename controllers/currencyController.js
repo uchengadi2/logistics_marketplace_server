@@ -34,7 +34,9 @@ exports.resizeCurrencySymbol = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
   //1. start by processing the cover image
-  req.body.symbol = `currency-${req.params.id}-${Date.now()}-symbol.jpeg`;
+  req.body.symbol = `${req.body.name.split(" ")}-${
+    req.body.createdBy
+  }-${Date.now()}-symbol.jpeg`;
 
   await sharp(req.file.buffer)
     .resize(2000, 1333)

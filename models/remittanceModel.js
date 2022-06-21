@@ -76,6 +76,16 @@ const remittanceSchema = new mongoose.Schema(
         enum: ["pending", "partial", "complete"],
       },
     },
+    postedBy: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
+    datePosted: {
+      type: Date,
+      default: Date.now,
+    },
   },
 
   {

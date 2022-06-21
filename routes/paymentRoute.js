@@ -15,7 +15,7 @@ router
     paymentController.getAllPayments
   )
   .post(
-    authController.restrictTo("user", "admin"),
+    //authController.restrictTo("user", "admin"),
     paymentController.createPayment
   );
 

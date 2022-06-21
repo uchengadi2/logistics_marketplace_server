@@ -7,9 +7,9 @@ const router = express.Router();
 
 //protect all the routes below
 
-// router.use(authController.protect);
+router.use(authController.protect);
 
-// router.use(authController.restrictTo("admin", "user"));
+router.use(authController.restrictTo("admin", "user"));
 
 router
   .route("/")

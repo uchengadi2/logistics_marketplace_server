@@ -9,13 +9,12 @@ const router = express.Router();
 
 //router.use(authController.protect);
 
-router
-  .route("/")
-  .get(productController.getAllProducts)
-  .post(
-    authController.restrictTo("admin", "partner_admin"),
-    productController.createProduct
-  );
+router.route("/").get(productController.getAllProducts).post(
+  // authController.restrictTo("admin"),
+  productController.uploadProductCoverImage,
+  productController.resizeProductCoverImage,
+  productController.createProduct
+);
 
 router
   .route("/:id")
