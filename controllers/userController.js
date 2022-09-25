@@ -75,36 +75,36 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
 //processing multiple images
 
-exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
-  console.log(req.files); //logging multiples
-  if (!req.files.imageCover || !req.files.images) return next();
+// exports.resizeMultipleImages = catchAsync(async (req, res, next) => {
+//   console.log(req.files); //logging multiples
+//   if (!req.files.imageCover || !req.files.images) return next();
 
-  //1. start by processing the cover image
-  req.body.imageCover = `user-${req.params.id}-${Date.now()}-cover.jpeg`;
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat("jpeg")
-    .jpeg({ quality: 90 })
-    .toFile(`public/images/users/${req.body.imageCover}`);
+//   1. start by processing the cover image
+//   req.body.imageCover = `user-${req.params.id}-${Date.now()}-cover.jpeg`;
+//   await sharp(req.files.imageCover[0].buffer)
+//     .resize(2000, 1333)
+//     .toFormat("jpeg")
+//     .jpeg({ quality: 90 })
+//     .toFile(`public/images/users/${req.body.imageCover}`);
 
-  //2. process all the other images in a loop
-  req.body.images = [];
-  await Promise.all(
-    req.files.images.map(async (file, index) => {
-      const filename = `user-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
+//   2. process all the other images in a loop
+//   req.body.images = [];
+//   await Promise.all(
+//     req.files.images.map(async (file, index) => {
+//       const filename = `user-${req.params.id}-${Date.now()}-${index + 1}.jpeg`;
 
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat("jpeg")
-        .jpeg({ quality: 90 })
-        .toFile(`public/images/users/${filename}`);
+//       await sharp(file.buffer)
+//         .resize(2000, 1333)
+//         .toFormat("jpeg")
+//         .jpeg({ quality: 90 })
+//         .toFile(`public/images/users/${filename}`);
 
-      req.body.images.push(filename);
-    })
-  );
+//       req.body.images.push(filename);
+//     })
+//   );
 
-  next();
-});
+//   next();
+// });
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -192,6 +192,7 @@ exports.createUser = catchAsync(async (req, res, next) => {
     role: req.body.role,
     type: req.body.type,
     passwordResetToken: req.body.passwordResetToken,
+    vendor: req.body.vendor,
   });
 
   //createSendToken(newUser, 201, res);
@@ -217,6 +218,7 @@ exports.createUser = catchAsync(async (req, res, next) => {
       email: req.body.email,
       role: req.body.role,
       type: req.body.type,
+      vendor: req.body.vendor,
     };
     //send data to the client
     // res.status(200).json({

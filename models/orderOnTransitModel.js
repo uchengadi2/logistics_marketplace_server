@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const orderAssignmentSchema = new mongoose.Schema(
+const orderOnTransitSchema = new mongoose.Schema(
   {
     refNumber: {
       type: String,
@@ -9,10 +9,22 @@ const orderAssignmentSchema = new mongoose.Schema(
     label: {
       type: String,
     },
+    assignedOrder: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "OrderAssignment",
+      },
+    ],
     order: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "Order",
+      },
+    ],
+    vehicle: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Product",
       },
     ],
     category: [
@@ -33,15 +45,33 @@ const orderAssignmentSchema = new mongoose.Schema(
         ref: "Country",
       },
     ],
-    orderQuantityAssigned: {
-      type: Number,
+    crewLeaderName: {
+      type: String,
+    },
+    crewLeaderPhoneNumber: {
+      type: String,
+    },
+    crewFirstAssistantName: {
+      type: String,
+    },
+    crewFirstAssistantPhoneNumber: {
+      type: String,
+    },
+    crewSecondAssistantName: {
+      type: String,
+    },
+    crewSecondAssistantPhoneNumber: {
+      type: String,
     },
 
-    dateAssigned: {
+    transitCommencementDate: {
+      type: Date,
+    },
+    dateCreated: {
       type: Date,
       default: Date.now,
     },
-    assignedBy: [
+    createdBy: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "User",
@@ -50,7 +80,7 @@ const orderAssignmentSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "onTransit"],
+      enum: ["pending", "fullfilled"],
     },
   },
 
@@ -60,9 +90,6 @@ const orderAssignmentSchema = new mongoose.Schema(
   }
 );
 
-const OrderAssignment = mongoose.model(
-  "OrderAssignment",
-  orderAssignmentSchema
-);
+const OrderOnTransit = mongoose.model("OrderOnTransit", orderOnTransitSchema);
 
-module.exports = OrderAssignment;
+module.exports = OrderOnTransit;

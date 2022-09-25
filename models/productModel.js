@@ -23,35 +23,64 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [false, "Please provide the image cover"],
     },
-    images: [String],
+    images: {
+      type: String,
+    },
+    firstImage: {
+      type: String,
+    },
+    secondImage: {
+      type: String,
+    },
+    thirdImage: {
+      type: String,
+    },
+    fourthImage: {
+      type: String,
+    },
+
     quantity: {
       type: Number,
       default: 1,
-      required: [true, "A product must have quanyity"],
+      required: [false, "A product must have quanyity"],
     },
-    features: {
-      make: {
-        type: String,
-      },
-      model: {
-        type: String,
-      },
-      chassis: {
-        type: String,
-      },
-    },
+
     category: [
       {
         type: mongoose.Schema.ObjectId,
         ref: "Category",
       },
     ],
-    vendor: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "Vendor",
-      },
-    ],
+    vendor: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Vendor",
+    },
+    address: {
+      type: String,
+    },
+    city: {
+      type: mongoose.Schema.ObjectId,
+      ref: "City",
+    },
+    state: {
+      type: mongoose.Schema.ObjectId,
+      ref: "State",
+    },
+    country: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Country",
+    },
+
+    make: {
+      type: String,
+    },
+    model: {
+      type: String,
+    },
+    chassis: {
+      type: String,
+    },
+
     createdAt: {
       type: Date,
       default: Date.now,
@@ -63,44 +92,6 @@ const productSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    permanentLocation: {
-      type: {
-        type: String,
-        default: "Point",
-        enum: ["Point"],
-      },
-
-      coordinates: [Number],
-      permanentLocationAddress: String,
-      permanentLocationLatitude: { type: Number, default: 0 },
-      permanentLocationLongitide: { type: Number, default: 0 },
-      availabilityStatus: {
-        type: String,
-        default: "available",
-        enum: ["available", "notAvailable"],
-      },
-      city: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "City",
-        },
-      ],
-    },
-    startingRoute: {
-      city: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "City",
-        },
-      ],
-      dateAssigned: String,
-      assignedBy: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: "User",
-        },
-      ],
-    },
   },
   {
     toJSON: { virtuals: true },

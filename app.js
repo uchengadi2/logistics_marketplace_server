@@ -29,6 +29,8 @@ const holidayRouter = require("./routes/holidayRoute");
 const exchangerateRouter = require("./routes/exchangerateRoute");
 const orderAssignmentRouter = require("./routes/orderAssignmentRoute");
 const orderDeliveryRouter = require("./routes/orderDeliveryRoute");
+const orderOnTransitRouter = require("./routes/orderOnTransitRoute");
+const orderOnCompletionRouter = require("./routes/orderOnCompletionRoute");
 
 const app = express();
 
@@ -115,6 +117,8 @@ app.use("/api/v1/holidays", holidayRouter);
 app.use("/api/v1/exchangerates", exchangerateRouter);
 app.use("/api/v1/orderassignments", orderAssignmentRouter);
 app.use("/api/v1/orderdeliveries", orderDeliveryRouter);
+app.use("/api/v1/orderontransits", orderOnTransitRouter);
+app.use("/api/v1/orderoncompletions", orderOnCompletionRouter);
 
 //tackling unhandled routes
 app.all("*", (req, res, next) => {

@@ -46,6 +46,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role,
     passwordResetToken: req.body.passwordResetToken,
+    vendor: req.body.vendor,
   });
 
   createSendToken(newUser, 201, res);
@@ -53,6 +54,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
+  //console.log(req.body);
 
   // 1. check if email and password actually exist
   if (!email || !password) {
@@ -147,7 +149,6 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    console.log("the user role is:", req.user.role);
     //role is an array
     if (!roles.includes(req.user.role)) {
       return next(

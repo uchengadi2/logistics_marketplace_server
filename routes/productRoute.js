@@ -25,7 +25,7 @@ router
     productController.updateProduct
   )
   .delete(
-    authController.restrictTo("admin", "partner_admin"),
+    //authController.restrictTo("admin","user"),
     productController.deleteProduct
   );
 

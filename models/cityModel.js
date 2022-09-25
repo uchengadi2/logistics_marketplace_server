@@ -26,10 +26,7 @@ const citySchema = new mongoose.Schema(
         ref: "State",
       },
     ],
-    securityStatus: {
-      type: String,
-      enum: ["safe", "unsafe"],
-    },
+
     createdBy: [
       {
         type: mongoose.Schema.ObjectId,

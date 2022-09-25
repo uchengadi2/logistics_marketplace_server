@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema(
     status: {
       type: String,
       default: "pending",
-      enum: ["pending", "assigned", "onTransit", "fullfilled"],
+      enum: ["pending", "assigned"],
     },
     category: [
       {
@@ -37,6 +37,11 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     orderQuantity: {
+      type: Number,
+      required: [false, "Please provide the quantity you are ordering"],
+      min: 1,
+    },
+    totalUnassignedQuantity: {
       type: Number,
       required: [false, "Please provide the quantity you are ordering"],
       min: 1,
